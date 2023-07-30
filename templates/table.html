@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--    <title>SQLite Table Data</title>-->
+<link rel="stylesheet" href="/staticFiles/style.css" />
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <!-- Replace these with your column names -->
+            <th>id</th>
+            <th>Title</th>
+            <th>Path</th>
+            <th>Author</th>
+            <th>Time</th>
+
+            <!-- Add more <th> elements for each column in your table -->
+        </tr>
+        {% for row in data %}
+        <tr>
+<!--            <td>{{ row }}</td>-->
+
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td><a href="{{ row[2] }}" target="_self">{{ row[1] }}</a></td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <form action="/action" method="POST">
+        <input  type="submit" name="red" value ="red" >
+    </form>
+</body>
+</html>
