@@ -1,0 +1,17 @@
+*
+!/.gitignore
+!/main.py
+!/backend/server.py
+!/backend/database.py
+!/backend/utils.py
+!/backend/requirements.txt
+!/backend/__init__.py
+!/backend/user_abbreviations.csv
+!/frontend/package.json
+!/frontend/public/
+!/frontend/App.css
+!/frontend/App.js
+!/frontend/assets/
+!/frontend/CreateDocument.js
+!/frontend/DocumentList.js
+!/frontend/index.js
