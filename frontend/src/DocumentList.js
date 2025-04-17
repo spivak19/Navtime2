@@ -17,17 +17,32 @@ const DocumentList = () => {
     fetchDocuments();
   }, [sortBy, search, userFilter]);  // re-fetch when any filter changes
 
+
+  // Handle F5 key to refresh without reloading page
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'F5') {
+        e.preventDefault();
+        fetchDocuments();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [fetchDocuments]);
+
   return (
     <div>
       <h2>סימוכין</h2>
       <div>
         <label>
-          Search: <input type="text" value={search} onChange={e => setSearch(e.target.value)} />
+          חיפוש: <input type="text" value={search} onChange={e => setSearch(e.target.value)} />
         </label>
         <br />
         <br />
         <label>
-          Sort by:&nbsp;
+          מיין לפי:&nbsp;
           <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
             <option value="created_at">תאריך</option>
             <option value="user">משתמש</option>

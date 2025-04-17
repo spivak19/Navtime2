@@ -1,121 +1,134 @@
 /* frontend/src/App.css */
 
-/* Reset defaults: white background, basic typography with RTL direction */
+/* Global reset with a soft, angled gradient background */
 body {
   margin: 0;
   padding: 0;
-  background-color: #ffffff; /* Pure white background */
-  font-family: 'Arial', sans-serif;
-  direction: rtl; /* Set text and layout direction to right-to-left */
+  background: linear-gradient(135deg, #E0F7FF 0%, #FFF5E0 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
   text-align: center;
 }
 
-/* The outer container centers everything and aligns text right */
+/* Centering container */
 .app-container {
-  width: 100%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;       /* Center horizontally */
-  justify-content: center;   /* Center vertically */
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
-  text-align: center;         /* Align text to the right */
 }
 
-/* Logo container with some margin */
+/* Logo styling with subtle backdrop */
 .logo-container {
   margin-bottom: 20px;
 }
-
-/* Logo image styling */
 .logo-image {
-  max-width: 250px;
-  height: auto;
+  max-width: 220px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(6px);
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Content container for main sections */
+/* Content wrapper */
 .content-container {
   width: 100%;
-  max-width: 900px;
+  max-width: 920px;
+  padding: 24px;
   text-align: center;
-  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Glassy card effect */
+/* Glass morphism card */
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);  /* Semi-transparent white */
-  border-radius: 15px;
-  padding: 25px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 30px;
   margin: 20px auto;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);  /* Soft shadow for depth */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 80, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 80, 0.25);
 }
 
-/* Headings with a crisp color */
+/* Headings with vibrant accents */
 h1, h2 {
-  color: #333;
-  margin-bottom: 15px;
+  color: #004A90; /* deep blue */
+  margin-bottom: 18px;
 }
 
-/* Standard text labels and paragraphs */
+/* Labels and text */
 label, p, td, th {
-  color: #333;
+  color: #1A334F; /* darker blue-grey */
 }
 
-/* Form controls: inputs and select boxes */
+/* Inputs and selects */
 input, select {
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 8px;
   font-size: 1rem;
-  background: #f9f9f9;
-  color: #333;
-  text-align: right; /* Ensures input text is RTL */
+  color: #102147;
+  backdrop-filter: blur(5px);
+  transition: border-color 0.3s ease;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: #FFA500; /* orange accent on focus */
 }
 
-/* Buttons with a soft, modern feel */
+/* Buttons with flat orange background */
 button {
-  background: #ffa500; /* Orange accent */
+  background: #FFA500; /* flat orange */
   color: #fff;
   border: none;
-  padding: 12px 24px;
-  margin: 10px;
-  border-radius: 8px;
+  border-radius: 12px;
+  padding: 14px 28px;
+  margin: 14px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s ease, transform 0.2s ease;
+  font-size: 1.05rem;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 button:hover {
-  background: #f08700;
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* Tables with clean styling */
+/* Tables styled in glass theme */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px auto;
-  font-size: 0.95rem;
+  margin: 24px 0;
+  backdrop-filter: blur(6px);
 }
-
 th, td {
-  padding: 12px;
-  border: 1px solid #ddd;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
-
 th {
-  background: #f4f4f4;
-  color: #333;
+  background: rgba(255, 255, 255, 0.2);
+  color: #004A90;
 }
 
 /* Link styling */
 a {
-  color: #333;
+  color: #FFA500;
+  text-decoration: none;
+  font-weight: 500;
+}
+a:hover {
   text-decoration: underline;
-  cursor: pointer;
 }

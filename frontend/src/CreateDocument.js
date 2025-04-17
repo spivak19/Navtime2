@@ -72,7 +72,7 @@ const CreateDocument = ({ onDocumentCreated }) => {
       <h2>צור מסמך</h2>
       <div>
         <label>
-          Select Template:&nbsp;
+          בחר סגנון:&nbsp;
           <select value={selectedTemplate} onChange={e => setSelectedTemplate(e.target.value)}>
             {templates.map((template, idx) => (
               <option key={idx} value={template}>{template}</option>
@@ -81,8 +81,8 @@ const CreateDocument = ({ onDocumentCreated }) => {
         </label>
       </div>
       <div>
-        <label>Keywords: 
-          <input type="text" value={keywords} onChange={e => setKeywords(e.target.value)} />
+        <label>כותרת: 
+          <input type="text" value={keywords} onChange={e => setKeywords(e.target.value)} placeholder='לדוגמא: סיכום דיון'/>
         </label>
       </div>
 <div>
@@ -96,25 +96,25 @@ const CreateDocument = ({ onDocumentCreated }) => {
   </label>
 </div>
 
-      <button onClick={handleCreate}>Create Document</button>
+      <button onClick={handleCreate}>צור מסמך</button>
            <hr />
 
      <h2>הוסף קובץ קיים</h2>
      <div>
-        <input type="file" onChange={handleFileSelect} accept="*/*" />
+        <input type="file" onChange={handleFileSelect} accept="*/*"/>
         <br/>
         <label>
-          Keywords:&nbsp;
+          כותרת:&nbsp;
           <input
             type="text"
             value={existingKeywords}
             onChange={e => setExistingKeywords(e.target.value)}
-            placeholder="Enter keywords"
+            placeholder='לדוגמא: מצגת FTRR'
           />
         </label>       
        
      </div>
-     <button onClick={handleAddFile}>Add File</button>
+     <button onClick={handleAddFile}>הוסף קובץ</button>
     </div>
   );
 };
