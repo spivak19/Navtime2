@@ -1,0 +1,121 @@
+/* frontend/src/App.css */
+
+/* Reset defaults: white background, basic typography with RTL direction */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff; /* Pure white background */
+  font-family: 'Arial', sans-serif;
+  direction: rtl; /* Set text and layout direction to right-to-left */
+  text-align: center;
+}
+
+/* The outer container centers everything and aligns text right */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* Center horizontally */
+  justify-content: center;   /* Center vertically */
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;         /* Align text to the right */
+}
+
+/* Logo container with some margin */
+.logo-container {
+  margin-bottom: 20px;
+}
+
+/* Logo image styling */
+.logo-image {
+  max-width: 250px;
+  height: auto;
+}
+
+/* Content container for main sections */
+.content-container {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Glassy card effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);  /* Semi-transparent white */
+  border-radius: 15px;
+  padding: 25px;
+  margin: 20px auto;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);  /* Soft shadow for depth */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Headings with a crisp color */
+h1, h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Standard text labels and paragraphs */
+label, p, td, th {
+  color: #333;
+}
+
+/* Form controls: inputs and select boxes */
+input, select {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f9f9f9;
+  color: #333;
+  text-align: right; /* Ensures input text is RTL */
+}
+
+/* Buttons with a soft, modern feel */
+button {
+  background: #ffa500; /* Orange accent */
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  margin: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #f08700;
+  transform: scale(1.02);
+}
+
+/* Tables with clean styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px auto;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background: #f4f4f4;
+  color: #333;
+}
+
+/* Link styling */
+a {
+  color: #333;
+  text-decoration: underline;
+  cursor: pointer;
+}
