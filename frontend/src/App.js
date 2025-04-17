@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CreateDocument from './CreateDocument';
 import DocumentList from './DocumentList';
 import './App.css';
-import logo from './assets/logo.png'; // Ensure you have your logo in src/assets/logo.png
+import logo from './assets/logo.svg'; // Ensure you have your logo in src/assets/logo.png
 
 function App() {
   const [refresh, setRefresh] = useState(false);
@@ -25,6 +25,8 @@ function App() {
         <div className="glass-card">
           <DocumentList key={refresh} />
         </div>
+      </div>
+      <div>Made by - Ariel Spivak{"\n"}
       </div>
     </div>
   );

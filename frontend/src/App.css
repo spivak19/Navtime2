@@ -12,35 +12,41 @@ body {
 
 /* Centering container */
 .app-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
+  align-items: center;        /* centers content-container horizontally */
+  justify-content: flex-start;    /* centers content-container vertically */
+  padding: 20px 20px 0;
   box-sizing: border-box;
 }
 
+
 /* Logo styling with subtle backdrop */
 .logo-container {
-  margin-bottom: 20px;
+  position: fixed;   /* stick to the window, not the flex container */
+  top: 1rem;         /* small gap from top */
+  left: 1rem;        /* small gap from left */
+  z-index: 1000;     /* ensure it’s above everything */
 }
+
 .logo-image {
-  max-width: 220px;
+  width: 100px;  /* never smaller than 40px, never larger than 120px, scales with viewport */
+  height: 100px;
+  object-fit: contain;
+  display: block;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(6px);
-  padding: 12px;
+  padding: 6px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Content wrapper */
 .content-container {
-  width: 100%;
-  max-width: 920px;
-  padding: 24px;
-  text-align: center;
-  box-sizing: border-box;
+  margin-top: 4rem;  /* adjust if your logo max-height changes */
 }
 
 /* Glass morphism card */
@@ -54,7 +60,13 @@ body {
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   position: relative;
-  transition: box-shadow 0.3s ease;
+    /* ↓ new fixed-shape rules ↓ */
+  width: 100%;
+  width: 800px;      /* same as content-container */
+  min-height: 400px;     /* never shrink below this height */
+  
+  overflow-y: auto;      /* scroll inside if content is taller */
+  transition: none;  
 }
 .glass-card:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 80, 0.25);
@@ -83,6 +95,11 @@ input, select {
   backdrop-filter: blur(5px);
   transition: border-color 0.3s ease;
 }
+input {
+  width: 300px;
+  text-align: center;
+}
+
 input:focus, select:focus {
   outline: none;
   border-color: #FFA500; /* orange accent on focus */
