@@ -5,7 +5,7 @@ import csv
 import getpass
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
+from flask_cors import CORS 
 from sqlalchemy import or_, func
 
 # For Compiling
@@ -38,6 +38,7 @@ def create_doc():
     data = request.get_json()
     template_name = data.get('template')
     keywords = data.get('keywords', '')
+    class_val = data.get('class','סודי')
 
     if not template_name:
         return jsonify({"error": "Template name is required"}), 400
@@ -83,7 +84,7 @@ def create_doc():
 
         print(f'template name: {template_name}, keywords: {keywords}, new filename: {new_filename}')
         
-        doc_metadata = create_document(template_name, keywords, new_filename)
+        doc_metadata = create_document(template_name, keywords, new_filename, class_val)
 
         # Save the document metadata in the database.
         new_doc = Document(

@@ -6,6 +6,7 @@ const CreateDocument = ({ onDocumentCreated }) => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [classOption, setClassOption] = useState('סודי');
 
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/api/templates')
@@ -21,7 +22,8 @@ const CreateDocument = ({ onDocumentCreated }) => {
   const handleCreate = () => {
     axios.post('http://127.0.0.1:5000/api/create-document', {
       template: selectedTemplate,
-      keywords: keywords
+      keywords: keywords,
+      class: classOption
     })
     .then(response => {
       alert("Document created successfully.");
@@ -53,6 +55,17 @@ const CreateDocument = ({ onDocumentCreated }) => {
           <input type="text" value={keywords} onChange={e => setKeywords(e.target.value)} />
         </label>
       </div>
+<div>
+  <label>
+    סיווג:
+      <select value={classOption} onChange={e => setClassOption(e.target.value)}>
+        <option value="סודי">סודי</option>
+        <option value="שמור">שמור</option>
+        <option value='בלמ"ס'>בלמ"ס</option>
+      </select>
+  </label>
+</div>
+
       <button onClick={handleCreate}>Create Document</button>
     </div>
   );
