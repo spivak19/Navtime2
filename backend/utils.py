@@ -5,6 +5,9 @@ import getpass
 from docx import Document
 import csv
 from pyluach import dates, hebrewcal
+from database import SessionLocal
+from database import Document as Doc
+from sqlalchemy import or_, func
 
 # Define directories relative to this file
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
@@ -76,3 +79,42 @@ def create_document(template_name, additional_keywords="", new_filename=None, cl
         "user": getpass.getuser(),
         "keywords": additional_keywords
     }
+
+def FilenameGen():
+
+    username = getpass.getuser()
+
+    # Read the abbreviation from user_abbreviations.csv.
+    # The CSV should have rows in the format: username,abbreviation
+    abbrev = None
+    csv_path = os.path.join(os.path.dirname(__file__), 'user_abbreviations.csv')
+    with open(csv_path, newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            # Compare usernames case-insensitively.
+            if row and row[0].strip().lower() == username.lower():
+                abbrev = row[5].strip()
+                break
+    if not abbrev:
+        abbrev = "XX"  # Use a default abbreviation if none found.
+    today_str = datetime.now().strftime("%d%m%y")
+
+    # Count documents for this user created today.
+    db = SessionLocal()
+    # We assume that Document.created_at stores a string or datetime;
+    # in our utils we saved current_date_display as yyyy-mm-dd.
+    # To count, we can filter based on the date prefix if stored as a string.
+    # Alternatively, if created_at is a datetime, we can use date comparisons.
+    # Here, we assume created_at is a string in "yyyy-mm-dd" format,
+    # and we compare the day, month and year (adjust accordingly if needed).
+    today_date = datetime.now().date()
+    count = db.query(Doc).filter(
+        Doc.user == username,
+        func.date(Doc.created_at) == today_date
+    ).count()
+    db.close()
+    doc_count = count + 1
+    # Build the file name as: NV-{abbrev}-{ddmmyy}-{doc_count}
+
+    print("name generation went well")
+    return f"NV-{abbrev}-{today_str}-{doc_count}"

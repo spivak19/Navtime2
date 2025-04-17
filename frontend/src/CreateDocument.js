@@ -7,6 +7,8 @@ const CreateDocument = ({ onDocumentCreated }) => {
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [keywords, setKeywords] = useState('');
   const [classOption, setClassOption] = useState('סודי');
+  const [existingFile, setExistingFile] = useState(null);
+  const [existingKeywords, setExistingKeywords] = useState('');
 
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/api/templates')
@@ -18,6 +20,10 @@ const CreateDocument = ({ onDocumentCreated }) => {
       })
       .catch(error => console.error(error));
   }, []);
+
+  const handleFileSelect = e => {
+    setExistingFile(e.target.files[0]);
+  };
 
   const handleCreate = () => {
     axios.post('http://127.0.0.1:5000/api/create-document', {
@@ -36,6 +42,30 @@ const CreateDocument = ({ onDocumentCreated }) => {
       alert("Error creating document.");
     });
   };
+
+   // Handler to add an existing local file
+ const handleAddFile = () => {
+   if (!existingFile) {
+     alert('Please select a file first.');
+     return;
+   }
+
+   const form = new FormData();
+   form.append('file', existingFile);
+   form.append('keywords', existingKeywords);
+
+   axios.post('http://127.0.0.1:5000/api/add-file', form)
+   .then(() => {
+     alert('File added successfully.');
+     setExistingFile(null);
+     setExistingKeywords('');
+     if (onDocumentCreated) onDocumentCreated();
+   })
+   .catch(err => {
+     console.error(err);
+     alert('Error adding file.');
+   });
+ };
 
   return (
     <div className="card">
@@ -67,6 +97,24 @@ const CreateDocument = ({ onDocumentCreated }) => {
 </div>
 
       <button onClick={handleCreate}>Create Document</button>
+           <hr />
+
+     <h2>הוסף קובץ קיים</h2>
+     <div>
+        <input type="file" onChange={handleFileSelect} accept="*/*" />
+        <br/>
+        <label>
+          Keywords:&nbsp;
+          <input
+            type="text"
+            value={existingKeywords}
+            onChange={e => setExistingKeywords(e.target.value)}
+            placeholder="Enter keywords"
+          />
+        </label>       
+       
+     </div>
+     <button onClick={handleAddFile}>Add File</button>
     </div>
   );
 };

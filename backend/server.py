@@ -6,6 +6,7 @@ import getpass
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS 
+from werkzeug.utils import secure_filename
 from sqlalchemy import or_, func
 
 # For Compiling
@@ -15,9 +16,22 @@ from sqlalchemy import or_, func
 
 ## Before Compiling
 from database import SessionLocal, init_db, Document
-from utils import create_document, TEMPLATE_DIR, OUTPUT_DIR
+from utils import create_document, FilenameGen, TEMPLATE_DIR, OUTPUT_DIR
 
+NAME_TO_USER = {}
+USER_TO_NAME = {}
+csv_path = os.path.join(os.path.dirname(__file__), 'user_abbreviations.csv')
 
+with open(csv_path, newline='', encoding='utf-8') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        if len(row) >= 1:
+            username = row['id'].strip()
+            name = row['Hebrew First Name'].strip() + " " + row['Hebrew Last Name'].strip()
+            abbr = row['Initials'].strip()
+
+            NAME_TO_USER[name] = username
+            USER_TO_NAME[username] = name
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), '../frontend/build'), static_url_path='/')
 CORS(app)  # Enable CORS for development
@@ -45,46 +59,13 @@ def create_doc():
 
     try:
         # Retrieve the current logged-in user.
-        username = getpass.getuser()
-
-        # Read the abbreviation from user_abbreviations.csv.
-        # The CSV should have rows in the format: username,abbreviation
-        abbrev = None
-        csv_path = os.path.join(os.path.dirname(__file__), 'user_abbreviations.csv')
-        with open(csv_path, newline='', encoding='utf-8') as csvfile:
-            reader = csv.reader(csvfile)
-            for row in reader:
-                # Compare usernames case-insensitively.
-                if row and row[0].strip().lower() == username.lower():
-                    abbrev = row[5].strip()
-                    break
-        if not abbrev:
-            abbrev = "XX"  # Use a default abbreviation if none found.
-
-        # Generate today's date in ddmmyy format.
-        today_str = datetime.now().strftime("%d%m%y")
-
-        # Count documents for this user created today.
-        db = SessionLocal()
-        # We assume that Document.created_at stores a string or datetime;
-        # in our utils we saved current_date_display as yyyy-mm-dd.
-        # To count, we can filter based on the date prefix if stored as a string.
-        # Alternatively, if created_at is a datetime, we can use date comparisons.
-        # Here, we assume created_at is a string in "yyyy-mm-dd" format,
-        # and we compare the day, month and year (adjust accordingly if needed).
-        today_date = datetime.now().date()
-        count = db.query(Document).filter(
-            Document.user == username,
-            func.date(Document.created_at) == today_date
-        ).count()
-        doc_count = count + 1
-        # Build the file name as: NV-{abbrev}-{ddmmyy}-{doc_count}
-        new_filename = f"NV-{abbrev}-{today_str}-{doc_count}"
+        new_filename = FilenameGen()
         # Create the document by calling the updated function.
 
         print(f'template name: {template_name}, keywords: {keywords}, new filename: {new_filename}')
         
         doc_metadata = create_document(template_name, keywords, new_filename, class_val)
+        db = SessionLocal()
 
         # Save the document metadata in the database.
         new_doc = Document(
@@ -113,6 +94,7 @@ def create_doc():
 
 @app.route('/api/documents', methods=['GET'])
 def get_documents():
+    
     sort_by = request.args.get('sort_by', 'created_at')
     search = request.args.get('search', '')
     user_filter = request.args.get('user', '').strip()
@@ -121,17 +103,22 @@ def get_documents():
     query = db.query(Document)
     
     if search:
+        matched_users = [
+            user for abbr, user in NAME_TO_USER.items()
+            if search.lower() in abbr.lower()
+        ]
+        ors = []
+        if matched_users:
+            ors = [Document.user == u for u in matched_users]
         query = query.filter(
             or_(
                 Document.file_name.like(f"%{search}%"),
                 Document.keywords.like(f"%{search}%"),
+                *ors,
                 Document.user.like(f"%{search}%")
             )
         )
-    
-    if user_filter:
-        query = query.filter(Document.user == user_filter)
-    
+
     if sort_by in ['created_at', 'user', 'file_name']:
         query = query.order_by(getattr(Document, sort_by).desc())
     
@@ -146,7 +133,7 @@ def get_documents():
             "file_name": doc.file_name,
             "file_path": doc.file_path,
             "created_at": doc.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "user": doc.user,
+            "user": USER_TO_NAME[doc.user],
             "keywords": doc.keywords
         })
 
@@ -188,6 +175,60 @@ def launch_file(filename):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/add-file', methods=['POST'])
+def add_file():
+    """
+    Accept a file upload, save it into OUTPUT_DIR, then record it in the DB.
+    """
+    print("FILES: ",request.files)
+    print("FORM: ", request.form.to_dict())
 
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    f = request.files['file']
+    if f.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    # Sanitize filename
+    filename = FilenameGen()
+    output_path = os.path.join(OUTPUT_DIR, filename)
+    # Grab Keywords
+    keywords = request.form.get('keywords', '').strip()
+    print(keywords)
+    # Save the file
+    try:
+        f.save(output_path)
+    except Exception as e:
+        return jsonify({"error": f"Failed to save file: {e}"}), 500
+
+    # Record in the database
+    try:
+        db = SessionLocal()
+        new_doc = Document(
+            file_name=filename,
+            file_path=output_path,
+            created_at=datetime.now(),
+            user=getpass.getuser(),
+            keywords=keywords  # or pull from request.form.get('keywords', '')
+        )
+        db.add(new_doc)
+        db.commit()
+        db.refresh(new_doc)
+        db.close()
+        print(new_doc.keywords)
+        return jsonify({
+            "message": "File added",
+            "document": {
+                "id": new_doc.id,
+                "file_name": new_doc.file_name,
+                "file_path": new_doc.file_path,
+                "created_at": new_doc.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                "user": new_doc.user,
+                "keywords": new_doc.keywords
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({"error": f"DB error: {e}"}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

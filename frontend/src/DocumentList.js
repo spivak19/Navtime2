@@ -25,9 +25,6 @@ const DocumentList = () => {
           Search: <input type="text" value={search} onChange={e => setSearch(e.target.value)} />
         </label>
         <br />
-        <label>
-          Filter by User: <input type="text" value={userFilter} onChange={e => setUserFilter(e.target.value)} />
-        </label>
         <br />
         <label>
           Sort by:&nbsp;
