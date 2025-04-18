@@ -29,6 +29,9 @@ def create_document(template_name, additional_keywords="", new_filename=None, cl
     csv_path = os.path.join(os.path.dirname(__file__), 'user_abbreviations.csv')
     username = getpass.getuser()
 
+    HebrewName = ''
+    rank = ''
+    title =''
     with open(csv_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
