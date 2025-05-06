@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS 
 from werkzeug.utils import secure_filename
 from sqlalchemy import or_, func
+from docx import Document as DocxDocument
 
 # For Compiling
 # from backend.database import SessionLocal, init_db, Document
@@ -38,6 +39,9 @@ CORS(app)  # Enable CORS for development
 
 # Initialize the database tables.
 init_db()
+
+# Admin password
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
 @app.route('/api/templates', methods=['GET'])
 def list_templates():
@@ -215,7 +219,6 @@ def add_file():
         db.commit()
         db.refresh(new_doc)
         db.close()
-        print(new_doc.keywords)
         return jsonify({
             "message": "File added",
             "document": {
@@ -230,5 +233,86 @@ def add_file():
     except Exception as e:
         return jsonify({"error": f"DB error: {e}"}), 500
     
+
+@app.route('/api/import-directory', methods=['POST'])
+def import_directory():
+    """
+    Walks the given directory and adds all .docx files to the DB,
+    extracting 'keywords' from each file's core properties.
+    Expects JSON:
+      {
+        "path": "C:/full/path/to/dir",
+        "password": "admin123"
+      }
+    """
+    data = request.get_json() or {}
+    # 1) Auth check
+    if data.get('password') != ADMIN_PASSWORD:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # 2) Path check
+    dir_path = data.get('path', '').strip()
+    if not dir_path or not os.path.isdir(dir_path):
+        return jsonify({"error": "Invalid or missing directory path"}), 400
+
+    db = SessionLocal()
+    imported = []
+    try:
+        for root, _, files in os.walk(dir_path):
+            for fname in files:
+                if not fname.lower().endswith('.docx'):
+                    continue
+
+                full_path = os.path.join(root, fname)
+                # Skip if already in DB
+                if db.query(Document).filter(Document.file_path == full_path).first():
+                    continue
+
+                # 3) Extract keywords and user from the .docx core properties
+                try:
+                    docx = DocxDocument(full_path)
+                    for par in docx.paragraphs:
+                        if "הנדון:" in par.text:
+                            kw = par.text
+                            kw = kw.replace("הנדון:","")
+                            break
+                    author = docx.core_properties.author
+                    print(author)
+                except Exception as e:
+                    # If the file is corrupted or unreadable, skip it
+                    print(f"Failed to read {full_path}: {e}")
+                    kw = ''
+                    author = getpass.getuser()
+
+                # 4) Use file's last‐modified time as created_at
+                ts = os.path.getmtime(full_path)
+                created_dt = datetime.fromtimestamp(ts)
+
+                # 5) Insert into DB
+                new_doc = Document(
+                    file_name=fname,
+                    file_path=full_path,
+                    created_at=created_dt,
+                    user=author,
+                    keywords=kw
+                )
+                db.add(new_doc)
+                db.flush()  # so new_doc.id is set
+                imported.append({
+                    "id": new_doc.id,
+                    "file_name": fname,
+                    "file_path": full_path,
+                    "keywords": kw
+                })
+
+        db.commit()
+        return jsonify({"imported": imported}), 200
+
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        db.close()
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

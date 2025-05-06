@@ -7,6 +7,7 @@ const DocumentList = () => {
   const [search, setSearch] = useState('');
   const [userFilter, setUserFilter] = useState('');
 
+
   const fetchDocuments = () => {
     axios.get(`http://127.0.0.1:5000/api/documents?sort_by=${sortBy}&search=${search}&user=${userFilter}`)
       .then(response => setDocuments(response.data.documents))
