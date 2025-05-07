@@ -6,6 +6,7 @@ const DocumentList = () => {
   const [sortBy, setSortBy] = useState('created_at');
   const [search, setSearch] = useState('');
   const [userFilter, setUserFilter] = useState('');
+  const [users, setUsers] = useState([]);  // list of abbreviations
 
 
   const fetchDocuments = () => {
@@ -14,6 +15,13 @@ const DocumentList = () => {
       .catch(error => console.error(error));
   };
 
+// Fetch available users once on mount
+  useEffect(() => {
+     axios.get('http://127.0.0.1:5000/api/users')
+       .then(res => setUsers(res.data.users))
+       .catch(err => console.error(err));
+  }, []);
+  
   useEffect(() => {
     fetchDocuments();
   }, [sortBy, search, userFilter]);  // re-fetch when any filter changes
@@ -37,13 +45,28 @@ const DocumentList = () => {
     <div>
       <h2>סימוכין</h2>
       <div>
+          <label>
+            חיפוש: &nbsp;
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="הכנס כותרת או משתמש"
+          />
+          </label>
+          &nbsp;&nbsp;
+          <label>
+           משתמש:&nbsp;
+            <select
+                value={userFilter}
+                onChange={e => setUserFilter(e.target.value)}
+              >
+              <option value="">All</option>
+              {users.map(u => (<option key={u} value={u}>{u}</option>))}
+            </select>
+          </label>
         <label>
-          חיפוש: <input type="text" value={search} onChange={e => setSearch(e.target.value)} />
-        </label>
-        <br />
-        <br />
-        <label>
-          מיין לפי:&nbsp;
+          מיין:&nbsp;
           <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
             <option value="created_at">תאריך</option>
             <option value="user">משתמש</option>

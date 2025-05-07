@@ -101,7 +101,6 @@ def get_documents():
     
     sort_by = request.args.get('sort_by', 'created_at')
     search = request.args.get('search', '')
-    user_filter = request.args.get('user', '').strip()
 
     db = SessionLocal()
     query = db.query(Document)
@@ -314,5 +313,26 @@ def import_directory():
 
     finally:
         db.close()
+
+#Filter search by user
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    """
+    Return a JSON list of all distinct user abbreviations in the documents table.
+    """
+    db = SessionLocal()
+    # get raw usernames
+    raw_users = [row[0] for row in db.query(Document.user).distinct().all()]
+    db.close()
+
+    # map to abbreviations (fall back to raw username)
+    abbrs = [USER_TO_NAME.get(u, u) for u in raw_users]
+
+    # sort alphabetically, and return
+    abbrs.sort()
+    print(abbrs)
+    return jsonify({"users": abbrs})
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
