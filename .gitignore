@@ -7,6 +7,7 @@
 !/backend/requirements.txt
 !/backend/__init__.py
 !/backend/user_abbreviations.csv
+!/backend/scratch.py
 !/frontend/package.json
 !/frontend/public/
 !/frontend/App.css
