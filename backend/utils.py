@@ -36,7 +36,7 @@ def create_document(template_name, additional_keywords="", new_filename=None, cl
         reader = csv.reader(csvfile)
         for row in reader:
             # Compare usernames case-insensitively.
-            if row and row[0].strip().lower() == username.lower():
+            if row and row[0].strip() == username:
                 HebrewName = row[3].strip() + " " + row[4].strip()
                 rank = row[6].strip()
                 title = row[7].strip()
@@ -73,8 +73,10 @@ def create_document(template_name, additional_keywords="", new_filename=None, cl
         file_name = "NV-" + datetime.now().strftime('%Y%m%d%H%M%S') + ".docx"
     output_path = os.path.join(OUTPUT_DIR, file_name)
     
+    core_properties = doc.core_properties
+    core_properties.author = getpass.getuser()
+
     doc.save(output_path)
-    
     return {
         "file_name": file_name,
         "file_path": output_path,
