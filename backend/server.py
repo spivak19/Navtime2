@@ -63,6 +63,8 @@ def create_doc():
 
     try:
         # Retrieve the current logged-in user.
+        username = getpass.getuser()
+        
         new_filename = FilenameGen()
         # Create the document by calling the updated function.
 

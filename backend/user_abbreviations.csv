@@ -1,5 +1,7 @@
 id,First Name,Last Name,Hebrew First Name,Hebrew Last Name,Initials,rank,title
 8307800,Michael,Rahamin,מיכאל,רחמים,MR,"קא""ב","קפ""ט ניווט אווירי"
 1234567,nadav,mashiach,נדב,משיח,NM,סגן,"קמ""ד ניווט לכטמם"
-spiva,Ariel,Spivak,אריאל,ספיבק,AS,"קא""ב",מהנדס מערכת ניווט
-Spivak,Ariel2,Spivak2,אריאל2,ספיבק2,AS2,"קא"ב", מהנדס מערכת
+ariel spivak,Ariel2,Spivak2,אריאל2,ספיבק2,AS2,"קא"ב", מהנדס מערכת
+spiva,Ariel,Spivak,אריאל2,ספיבק,AS,"קא""ב",מהנדס מערכת ניווט
+ariel spivak,ARIEL3,SPIVAK3,אריאל3,ספיבק3,AS3,קא"ב,מהנדס מערכת ניווט
+
