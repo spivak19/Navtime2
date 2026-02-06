@@ -10,13 +10,15 @@ def start_flask():
     app.run(host='127.0.0.1', port=5000)
 
 if __name__ == '__main__':
-    flask_thread = threading.Thread(target=start_flask)
-    flask_thread.daemon = True
-    flask_thread.start()
+    app.run(host='127.0.0.1', port=5000)
+    # flask_thread = threading.Thread(target=start_flask)
+    # flask_thread.daemon = True
+    # flask_thread.start()
     
-    # Wait a moment for the server to start
-    time.sleep(1)
+    # # Wait a moment for the server to start
+    # time.sleep(1)
     
-    # Open a desktop window that loads the Flask-hosted app
-    webview.create_window('Document Management System', 'http://127.0.0.1:5000')
-    webview.start()
+    # # Open a desktop window that loads the Flask-hosted app
+    # webview.create_window('Document Management System', 'http://127.0.0.1:5000')
+    # webview.start()
+
