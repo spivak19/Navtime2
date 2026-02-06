@@ -13,7 +13,6 @@ click==8.3.1
 clr_loader==0.2.10
 colorama==0.4.6
 DateTime==6.0
-docx==0.2.4
 filetype==1.2.0
 Flask==3.1.2
 flask-cors==6.0.2
@@ -42,6 +41,7 @@ proxy_tools==0.1.0
 pycparser==3.0
 pydantic==2.12.4
 pydantic_core==2.41.5
+python-docx==1.2.0
 pythonnet==3.0.0rc6
 pytz==2025.2
 pywebview==6.1
