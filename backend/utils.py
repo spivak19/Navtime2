@@ -5,8 +5,11 @@ import getpass
 from docx import Document
 import csv
 from pyluach import dates, hebrewcal
-from database import SessionLocal
-from database import Document as Doc
+# from database import SessionLocal
+# from database import Document as Doc
+
+from backend.database import SessionLocal
+from backend.database import Document as Doc
 from sqlalchemy import or_, func
 
 # Define directories relative to this file
