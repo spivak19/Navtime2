@@ -12,7 +12,7 @@ from docx import Document as DocxDocument
 
 # For Compiling
 from backend.database import SessionLocal, init_db, Document
-from backend.utils import create_document, TEMPLATE_DIR, OUTPUT_DIR
+from backend.utils import create_document, FilenameGen, TEMPLATE_DIR, OUTPUT_DIR
 
 
 ## Before Compiling
